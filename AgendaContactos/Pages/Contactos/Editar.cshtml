@@ -9,27 +9,9 @@
 <div class="row">
     <div class="col-md-6">
         <form method="post" novalidate>
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <partial name="_FormularioContacto" model="Model.Contacto" />
 
-            <div class="mb-3">
-                <label asp-for="Contacto.Nombre" class="form-label"></label>
-                <input asp-for="Contacto.Nombre" class="form-control" />
-                <span asp-validation-for="Contacto.Nombre" class="text-danger"></span>
-            </div>
-
-            <div class="mb-3">
-                <label asp-for="Contacto.Telefono" class="form-label"></label>
-                <input asp-for="Contacto.Telefono" class="form-control" />
-                <span asp-validation-for="Contacto.Telefono" class="text-danger"></span>
-            </div>
-
-            <div class="mb-3">
-                <label asp-for="Contacto.Email" class="form-label"></label>
-                <input asp-for="Contacto.Email" class="form-control" />
-                <span asp-validation-for="Contacto.Email" class="text-danger"></span>
-            </div>
-
-            <button type="submit" class="btn btn-primary">Guardar</button>
+            <button type="submit" class="btn btn-primary">Guardar cambios</button>
             <a asp-page="Index" class="btn btn-secondary">Cancelar</a>
         </form>
     </div>
