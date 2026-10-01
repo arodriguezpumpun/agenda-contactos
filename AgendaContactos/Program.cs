@@ -1,7 +1,10 @@
+using AgendaContactos.Services;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddRazorPages();
+builder.Services.AddSingleton<IContactoService, ContactoService>();
 
 var app = builder.Build();
 
