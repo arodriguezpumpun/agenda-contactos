@@ -29,7 +29,6 @@
     <p class="text-muted">Todavía no hay contactos.</p>
 }
 else
-
 {
     <table class="table table-striped table-hover align-middle">
         <thead class="table-dark">
@@ -57,4 +56,24 @@ else
             }
         </tbody>
     </table>
+
+    <!-- ⬇️ PAGINACIÓN (usa pageNumber, no page) ⬇️ -->
+    <nav>
+        <ul class="pagination justify-content-center">
+            <li class="page-item @(Model.HasPreviousPage ? "" : "disabled")">
+                <a class="page-link" href="/Contactos?pageNumber=@(Model.CurrentPage - 1)&busqueda=@Model.Busqueda">Anterior</a>
+            </li>
+
+            @for (int i = 1; i <= Model.TotalPages; i++)
+            {
+                <li class="page-item @(i == Model.CurrentPage ? "active" : "")">
+                    <a class="page-link" href="/Contactos?pageNumber=@i&busqueda=@Model.Busqueda">@i</a>
+                </li>
+            }
+
+            <li class="page-item @(Model.HasNextPage ? "" : "disabled")">
+                <a class="page-link" href="/Contactos?pageNumber=@(Model.CurrentPage + 1)&busqueda=@Model.Busqueda">Siguiente</a>
+            </li>
+        </ul>
+    </nav>
 }
