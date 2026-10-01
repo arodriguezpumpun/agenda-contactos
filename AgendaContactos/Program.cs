@@ -1,10 +1,15 @@
+using AgendaContactos.Data;
 using AgendaContactos.Services;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Services.AddDbContext<AgendaDbContext>(options =>
+options.UseSqlite(builder.Configuration.GetConnectionString("Agenda")));
+
 // Add services to the container.
 builder.Services.AddRazorPages();
-builder.Services.AddSingleton<IContactoService, ContactoService>();
+builder.Services.AddScoped<IContactoService, ContactoServiceEf>();
 
 var app = builder.Build();
 
