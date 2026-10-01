@@ -11,17 +11,17 @@ public class ContactoService : IContactoService
     public ContactoService()
     {
         // Datos de ejemplo para no empezar con la tabla vacía
-        Anadir(new Contacto 
-        { 
-            Nombre = "Ana García", 
+        Anadir(new Contacto
+        {
+            Nombre = "Ana García",
             Telefono = "600111222",
-            Email = "ana@ejemplo.com" 
+            Email = "ana@ejemplo.com"
         });
-        Anadir(new Contacto 
-        { 
-            Nombre = "Luis Pérez", 
+        Anadir(new Contacto
+        {
+            Nombre = "Luis Pérez",
             Telefono = "600333444",
-            Email = "luis@ejemplo.com" 
+            Email = "luis@ejemplo.com"
         });
     }
 
