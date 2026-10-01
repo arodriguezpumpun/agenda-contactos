@@ -37,10 +37,9 @@ else
                     <td>@contacto.Telefono</td>
                     <td>@contacto.Email</td>
                     <td class="text-end">
+                        <a asp-page="Editar" asp-route-id="@contacto.Id" class="btn btn-sm btn-outline-primary">Editar</a>
                         <form method="post" asp-page-handler="Borrar" asp-route-id="@contacto.Id" class="d-inline" onsubmit="return confirm('¿Borrar a @contacto.Nombre?');">
-                            <button type="submit" class="btn btn-sm btn-outline-danger">
-                                Borrar
-                            </button>
+                            <button type="submit" class="btn btn-sm btn-outline-danger">Borrar</button>
                         </form>
                     </td>
                 </tr>
