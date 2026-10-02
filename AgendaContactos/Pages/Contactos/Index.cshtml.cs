@@ -161,4 +161,148 @@ public class IndexModel : PageModel
 
         return value;
     }
+
+    [BindProperty]
+    public IFormFile? CsvFile { get; set; }
+
+    public async Task<IActionResult> OnPostImportarCsvAsync()
+    {
+        if (CsvFile == null || CsvFile.Length == 0)
+        {
+            TempData["Mensaje"] = "No se ha seleccionado ningún archivo.";
+            TempData["MensajeTipo"] = "danger";
+            return RedirectToPage();
+        }
+
+        // Validar extensión
+        if (!CsvFile.FileName.EndsWith(".csv", StringComparison.OrdinalIgnoreCase))
+        {
+            TempData["Mensaje"] = "El archivo debe ser un CSV.";
+            TempData["MensajeTipo"] = "danger";
+            return RedirectToPage();
+        }
+
+        var usuarioId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        var importados = 0;
+        var errores = 0;
+        var mensajesError = new List<string>();
+
+        using (var reader = new StreamReader(CsvFile.OpenReadStream()))
+        {
+            // Leer la cabecera (primera línea)
+            var cabecera = await reader.ReadLineAsync();
+
+            // Leer línea por línea
+            string? linea;
+            var numeroLinea = 1;
+
+            while ((linea = await reader.ReadLineAsync()) != null)
+            {
+                numeroLinea++;
+
+                if (string.IsNullOrWhiteSpace(linea))
+                    continue;
+
+                try
+                {
+                    // Parsear la línea (maneja comillas y comas)
+                    var campos = ParsearLineaCsv(linea);
+
+                    // Esperamos: Nombre, Apellidos, Apodo, Telefono, Email, Notas, Favorito
+                    if (campos.Count < 5)
+                    {
+                        errores++;
+                        mensajesError.Add($"Línea {numeroLinea}: faltan campos");
+                        continue;
+                    }
+
+                    var contacto = new Contacto
+                    {
+                        Nombre = campos[0].Trim(),
+                        Apellidos = campos.Count > 1 ? campos[1].Trim() : null,
+                        Apodo = campos.Count > 2 ? campos[2].Trim() : null,
+                        Telefono = campos.Count > 3 ? campos[3].Trim() : null,
+                        Email = campos[4].Trim(),
+                        Favorito = campos.Count > 6 && (campos[6].Trim().ToLower() == "sí" || campos[6].Trim().ToLower() == "si" || campos[6].Trim().ToLower() == "true" || campos[6].Trim() == "1"),
+                        UsuarioId = usuarioId
+                    };
+
+                    // Validar campos obligatorios
+                    if (string.IsNullOrWhiteSpace(contacto.Nombre))
+                    {
+                        errores++;
+                        mensajesError.Add($"Línea {numeroLinea}: el nombre es obligatorio");
+                        continue;
+                    }
+
+                    if (string.IsNullOrWhiteSpace(contacto.Email))
+                    {
+                        errores++;
+                        mensajesError.Add($"Línea {numeroLinea}: el email es obligatorio");
+                        continue;
+                    }
+
+                    _contactoService.Anadir(contacto);
+                    importados++;
+                }
+                catch (Exception ex)
+                {
+                    errores++;
+                    mensajesError.Add($"Línea {numeroLinea}: {ex.Message}");
+                }
+            }
+        }
+
+        // Mensaje final
+        if (importados > 0)
+        {
+            TempData["Mensaje"] = $"Se han importado {importados} contactos." + (errores > 0 ? $" {errores} errores." : "");
+            TempData["MensajeTipo"] = errores > 0 ? "warning" : "success";
+        }
+        else
+        {
+            TempData["Mensaje"] = "No se ha importado ningún contacto." + (errores > 0 ? $" {errores} errores." : "");
+            TempData["MensajeTipo"] = "danger";
+        }
+
+        return RedirectToPage();
+    }
+
+    private List<string> ParsearLineaCsv(string linea)
+    {
+        var campos = new List<string>();
+        var campoActual = new System.Text.StringBuilder();
+        var dentroDeComillas = false;
+
+        for (int i = 0; i < linea.Length; i++)
+        {
+            var c = linea[i];
+
+            if (c == '"')
+            {
+                if (dentroDeComillas && i + 1 < linea.Length && linea[i + 1] == '"')
+                {
+                    // Comilla escapada ("")
+                    campoActual.Append('"');
+                    i++;
+                }
+                else
+                {
+                    dentroDeComillas = !dentroDeComillas;
+                }
+            }
+            else if (c == ',' && !dentroDeComillas)
+            {
+                campos.Add(campoActual.ToString());
+                campoActual.Clear();
+            }
+            else
+            {
+                campoActual.Append(c);
+            }
+        }
+
+        campos.Add(campoActual.ToString());
+        return campos;
+    }
 }
