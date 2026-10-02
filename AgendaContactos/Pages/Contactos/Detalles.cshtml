@@ -1,0 +1,145 @@
+@page "{id:int}"
+@model AgendaContactos.Pages.Contactos.DetallesModel
+@{
+    ViewData["Title"] = "Detalles del contacto";
+}
+
+<div class="mb-3">
+    <a asp-page="Index" class="btn btn-outline-secondary">
+        <i class="bi bi-arrow-left"></i> Volver a la lista
+    </a>
+</div>
+
+<div class="card">
+    <div class="card-body">
+        <div class="row align-items-center">
+            <div class="col-md-3 text-center mb-3 mb-md-0">
+                @if (!string.IsNullOrEmpty(Model.Contacto.FotoUrl))
+                {
+                    <img src="@Model.Contacto.FotoUrl" alt="@Model.Contacto.Nombre" 
+                         class="rounded-circle" 
+                         style="width: 150px; height: 150px; object-fit: cover;" />
+                }
+                else
+                {
+                    <div class="rounded-circle bg-primary text-white d-inline-flex align-items-center justify-content-center" 
+                         style="width: 150px; height: 150px; font-size: 3rem; font-weight: bold;">
+                        @Model.Contacto.Nombre.Substring(0, 1).ToUpper()
+                    </div>
+                }
+            </div>
+            <div class="col-md-9">
+                <h1>
+                    @Model.Contacto.Nombre @Model.Contacto.Apellidos
+                    @if (Model.Contacto.Favorito)
+                    {
+                        <i class="bi bi-star-fill text-warning"></i>
+                    }
+                </h1>
+                @if (!string.IsNullOrEmpty(Model.Contacto.Apodo))
+                {
+                    <p class="text-muted fst-italic fs-4">"@Model.Contacto.Apodo"</p>
+                }
+            </div>
+        </div>
+
+        <hr />
+
+        <dl class="row">
+            <dt class="col-sm-3"><i class="bi bi-envelope"></i> Email</dt>
+            <dd class="col-sm-9">
+                <a href="mailto:@Model.Contacto.Email">@Model.Contacto.Email</a>
+            </dd>
+
+            @if (!string.IsNullOrEmpty(Model.Contacto.Telefono))
+            {
+                <dt class="col-sm-3"><i class="bi bi-telephone"></i> Teléfono</dt>
+                <dd class="col-sm-9">
+                    <a href="tel:@Model.Contacto.Telefono">@Model.Contacto.Telefono</a>
+                </dd>
+            }
+
+            <dt class="col-sm-3"><i class="bi bi-star"></i> Favorito</dt>
+            <dd class="col-sm-9">
+                @if (Model.Contacto.Favorito)
+                {
+                    <span class="badge bg-warning text-dark">Sí</span>
+                }
+                else
+                {
+                    <span class="badge bg-secondary">No</span>
+                }
+            </dd>
+        </dl>
+
+        @if (!string.IsNullOrEmpty(Model.Contacto.Notas))
+        {
+            <hr />
+            <h5><i class="bi bi-journal-text"></i> Notas</h5>
+            <p class="text-pre-wrap">@Model.Contacto.Notas</p>
+        }
+
+        <hr />
+
+        <div class="d-flex gap-2 flex-wrap">
+            <a asp-page="Editar" asp-route-id="@Model.Contacto.Id" class="btn btn-primary">
+                <i class="bi bi-pencil"></i> Editar
+            </a>
+            <button type="button" class="btn btn-danger" 
+                    data-bs-toggle="modal" 
+                    data-bs-target="#borrarModal"
+                    data-contacto-id="@Model.Contacto.Id"
+                    data-contacto-nombre="@Model.Contacto.Nombre @Model.Contacto.Apellidos">
+                <i class="bi bi-trash"></i> Borrar
+            </button>
+            <a asp-page="Index" class="btn btn-secondary">
+                <i class="bi bi-arrow-left"></i> Volver
+            </a>
+        </div>
+    </div>
+</div>
+
+<!-- ⬇️ MODAL DE BORRAR (reutilizado) ⬇️ -->
+<div class="modal fade" id="borrarModal" tabindex="-1" aria-labelledby="borrarModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="borrarModalLabel">
+                    <i class="bi bi-exclamation-triangle text-warning"></i> Confirmar borrado
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+            </div>
+            <div class="modal-body">
+                ¿Estás seguro de que quieres borrar a <strong id="nombreContacto"></strong>?
+                <br />
+                <small class="text-muted">Esta acción no se puede deshacer.</small>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    <i class="bi bi-x-circle"></i> Cancelar
+                </button>
+                <form method="post" asp-page="Index" asp-page-handler="Borrar" class="d-inline">
+                    <input type="hidden" name="id" id="borrarContactoId" />
+                    <button type="submit" class="btn btn-danger">
+                        <i class="bi bi-trash"></i> Sí, borrar
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        (function () {
+            const borrarModal = document.getElementById('borrarModal');
+            borrarModal.addEventListener('show.bs.modal', function (event) {
+                const button = event.relatedTarget;
+                const contactoId = button.getAttribute('data-contacto-id');
+                const contactoNombre = button.getAttribute('data-contacto-nombre');
+                document.getElementById('borrarContactoId').value = contactoId;
+                document.getElementById('nombreContacto').textContent = contactoNombre;
+            });
+        })();
+    </script>
+}

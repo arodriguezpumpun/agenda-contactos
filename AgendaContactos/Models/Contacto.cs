@@ -38,6 +38,10 @@ public class Contacto
     [Display(Name = "Teléfono")]
     public string? Telefono { get; set; }
 
+    [StringLength(2000, ErrorMessage = "Máximo 2000 caracteres.")]
+    [Display(Name = "Notas")]
+    public string? Notas { get; set; }
+
     [Display(Name = "Favorito")]
     public bool Favorito { get; set; } = false;
 }

@@ -36,6 +36,9 @@ public class ContactoServiceEf : IContactoService
         existente.Apodo = contacto.Apodo;
         existente.Telefono = contacto.Telefono;
         existente.Email = contacto.Email;
+        existente.Notas = contacto.Notas;
+        existente.Favorito = contacto.Favorito;
+
         _db.SaveChanges();
     }
 

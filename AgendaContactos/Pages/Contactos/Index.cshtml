@@ -14,7 +14,7 @@
         }
         else
         {
-            <span class="badge bg-secondary">@Model.ContactosFiltrados de @Model.TotalContactos</span>
+            <span class="badge bg-secondary">@Model.ContactosFiltrados / @Model.TotalContactos</span>
         }
     </h1>
 
@@ -42,8 +42,9 @@
                     <i class="bi bi-search"></i>
                 </span>
                 <div class="position-relative">
-                    <input asp-for="Busqueda" class="form-control pe-5" id="searchInput" placeholder="Búsqueda por nombre o apellidos" style="min-width: 250px;" />
-                    <button type="button" id="clearSearch" 
+                    <input asp-for="Busqueda" class="form-control pe-5" id="searchInput"
+                           placeholder="Búsqueda por nombre o apellidos" style="min-width: 250px;" />
+                    <button type="button" id="clearSearch"
                             class="btn btn-link position-absolute top-50 end-0 translate-middle-y text-decoration-none text-muted pe-2"
                             style="display: none;">
                         <i class="bi bi-x-circle-fill"></i>
@@ -59,7 +60,8 @@
     </form>
 
     <div>
-        <button type="button" class="btn btn-sm btn-secondary" data-bs-toggle="modal" data-bs-target="#importarCsvModal">
+        <button type="button" class="btn btn-sm btn-secondary" data-bs-toggle="modal"
+                data-bs-target="#importarCsvModal">
             <i class="bi bi-upload"></i> Importar CSV
         </button>
         <a asp-page="Index" asp-page-handler="ExportarCsv" class="btn btn-sm btn-outline-secondary">
@@ -85,7 +87,7 @@ else
         <thead class="table-dark">
             <tr>
                 <th style="width: 60px;"></th>
-                <th>
+                <th style="width: 12%;">
                     <a href="/Contactos?orden=nombre&direccion=@(Model.Orden == "nombre" && Model.Direccion == "asc" ? "desc" : "asc")&busqueda=@Model.Busqueda&pageNumber=@Model.CurrentPage&soloFavoritos=@Model.SoloFavoritos"
                        class="text-white text-decoration-none">
                         Nombre
@@ -99,7 +101,7 @@ else
                         }
                     </a>
                 </th>
-                <th>
+                <th style="width: 15%;">
                     <a href="/Contactos?orden=apellidos&direccion=@(Model.Orden == "apellidos" && Model.Direccion == "asc" ? "desc" : "asc")&busqueda=@Model.Busqueda&pageNumber=@Model.CurrentPage&soloFavoritos=@Model.SoloFavoritos"
                        class="text-white text-decoration-none">
                         Apellidos
@@ -113,7 +115,7 @@ else
                         }
                     </a>
                 </th>
-                <th>
+                <th style="width: 12%;">
                     <a href="/Contactos?orden=apodo&direccion=@(Model.Orden == "apodo" && Model.Direccion == "asc" ? "desc" : "asc")&busqueda=@Model.Busqueda&pageNumber=@Model.CurrentPage&soloFavoritos=@Model.SoloFavoritos"
                        class="text-white text-decoration-none">
                         Apodo
@@ -127,8 +129,8 @@ else
                         }
                     </a>
                 </th>
-                <th>Teléfono</th>
-                <th>Email</th>
+                <th style="width: 12%;">Teléfono</th>
+                <th style="width: 20%;">Email</th>
                 <th class="text-end">Acciones</th>
             </tr>
         </thead>
@@ -156,6 +158,9 @@ else
                     <td>@contacto.Telefono</td>
                     <td>@contacto.Email</td>
                     <td class="text-end">
+                        <a asp-page="Detalles" asp-route-id="@contacto.Id" class="btn btn-sm btn-outline-info">
+                            <i class="bi bi-eye"></i> Detalles
+                        </a>
                         <form method="post" asp-page-handler="ToggleFavorito" asp-route-id="@contacto.Id" class="d-inline">
                             <button type="submit"
                                     class="btn btn-sm @(contacto.Favorito ? "btn-warning" : "btn-outline-warning")"
@@ -166,10 +171,8 @@ else
                         <a asp-page="Editar" asp-route-id="@contacto.Id" class="btn btn-sm btn-outline-primary">
                             <i class="bi bi-pencil"></i>
                         </a>
-                        <button type="button" class="btn btn-sm btn-outline-danger" 
-                                data-bs-toggle="modal" 
-                                data-bs-target="#borrarModal"
-                                data-contacto-id="@contacto.Id"
+                        <button type="button" class="btn btn-sm btn-outline-danger" data-bs-toggle="modal"
+                                data-bs-target="#borrarModal" data-contacto-id="@contacto.Id"
                                 data-contacto-nombre="@contacto.Nombre @contacto.Apellidos">
                             <i class="bi bi-trash"></i>
                         </button>
@@ -300,7 +303,6 @@ Ana,García,La Jefa,600111222,ana@ejemplo.com,Sí</code></pre>
             }
         });
 
-        // Limpiar al pulsar la X
         clearBtn.addEventListener('click', function () {
             input.value = '';
             clearTimeout(timeout);

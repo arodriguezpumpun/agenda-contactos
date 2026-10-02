@@ -56,6 +56,14 @@
     </div>
 </div>
 
+<div class="row">
+    <div class="col-md-12 mb-3">
+        <label asp-for="Notas" class="form-label"></label>
+        <textarea asp-for="Notas" class="form-control" rows="4" placeholder="Notas sobre el contacto (opcional)"></textarea>
+        <span asp-validation-for="Notas" class="text-danger"></span>
+    </div>
+</div>
+
 <div class="mb-3 form-check">
     <input asp-for="Favorito" class="form-check-input" />
     <label asp-for="Favorito" class="form-check-label"></label>

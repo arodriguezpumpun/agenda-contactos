@@ -28,11 +28,14 @@ public class EditarModel : PageModel
         Contacto = new Contacto
         {
             Id = contacto.Id,
+            FotoUrl = contacto.FotoUrl,
             Nombre = contacto.Nombre,
             Apellidos = contacto.Apellidos,
             Apodo = contacto.Apodo,
             Telefono = contacto.Telefono,
-            Email = contacto.Email
+            Email = contacto.Email,
+            Notas = contacto.Notas,
+            Favorito = contacto.Favorito,
         };
 
         return Page();
