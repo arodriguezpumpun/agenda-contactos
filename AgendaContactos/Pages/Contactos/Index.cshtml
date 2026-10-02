@@ -33,10 +33,8 @@
     </div>
 </div>
 
-<!-- ⬇️ FILA DEL BUSCADOR + IMPORTAR/EXPORTAR ⬇️ -->
 <div class="d-flex justify-content-between align-items-center mb-3">
     
-    <!-- Buscador (izquierda) -->
     <form method="get" class="row g-2" id="searchForm">
         <div class="col-auto">
             <div class="input-group input-group-sm">
@@ -164,12 +162,13 @@ else
                         <a asp-page="Editar" asp-route-id="@contacto.Id" class="btn btn-sm btn-outline-primary">
                             <i class="bi bi-pencil"></i>
                         </a>
-                        <form method="post" asp-page-handler="Borrar" asp-route-id="@contacto.Id" class="d-inline"
-                              onsubmit="return confirm('¿Borrar a @contacto.Nombre?');">
-                            <button type="submit" class="btn btn-sm btn-outline-danger">
-                                <i class="bi bi-trash"></i>
-                            </button>
-                        </form>
+                        <button type="button" class="btn btn-sm btn-outline-danger" 
+                                data-bs-toggle="modal" 
+                                data-bs-target="#borrarModal"
+                                data-contacto-id="@contacto.Id"
+                                data-contacto-nombre="@contacto.Nombre @contacto.Apellidos">
+                            <i class="bi bi-trash"></i>
+                        </button>
                     </td>
                 </tr>
             }
@@ -235,20 +234,46 @@ Ana,García,La Jefa,600111222,ana@ejemplo.com,Sí</code></pre>
     </div>
 </div>
 
+<div class="modal fade" id="borrarModal" tabindex="-1" aria-labelledby="borrarModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="borrarModalLabel">
+                    <i class="bi bi-exclamation-triangle text-warning"></i> Confirmar borrado
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+            </div>
+            <div class="modal-body">
+                ¿Estás seguro de que quieres borrar a <strong id="nombreContacto"></strong>?
+                <br />
+                <small class="text-muted">Esta acción no se puede deshacer.</small>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    <i class="bi bi-x-circle"></i> Cancelar
+                </button>
+                <form method="post" asp-page-handler="Borrar" id="borrarForm" class="d-inline">
+                    <input type="hidden" name="id" id="borrarContactoId" />
+                    <button type="submit" class="btn btn-danger">
+                        <i class="bi bi-trash"></i> Sí, borrar
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
 <script>
     (function () {
         const form = document.getElementById('searchForm');
         const input = document.getElementById('searchInput');
         let timeout = null;
 
-        // ⬇️ RECUPERAR EL FOCO AL CARGAR LA PÁGINA
         if (input.value.trim().length > 0) {
             input.focus();
-            // Poner el cursor al final del texto
             input.setSelectionRange(input.value.length, input.value.length);
         }
 
-        // Búsqueda en tiempo real (con debounce)
         input.addEventListener('input', function () {
             clearTimeout(timeout);
             timeout = setTimeout(function () {
@@ -256,12 +281,27 @@ Ana,García,La Jefa,600111222,ana@ejemplo.com,Sí</code></pre>
             }, 500);
         });
 
-        // Búsqueda al pulsar Enter
         input.addEventListener('keydown', function (e) {
             if (e.key === 'Enter') {
                 clearTimeout(timeout);
                 form.submit();
             }
+        });
+    })();
+</script>
+
+<script>
+    (function () {
+        const borrarModal = document.getElementById('borrarModal');
+        
+        borrarModal.addEventListener('show.bs.modal', function (event) {
+            const button = event.relatedTarget;
+            
+            const contactoId = button.getAttribute('data-contacto-id');
+            const contactoNombre = button.getAttribute('data-contacto-nombre');
+            
+            document.getElementById('borrarContactoId').value = contactoId;
+            document.getElementById('nombreContacto').textContent = contactoNombre;
         });
     })();
 </script>
