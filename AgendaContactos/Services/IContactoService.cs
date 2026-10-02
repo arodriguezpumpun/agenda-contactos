@@ -8,4 +8,6 @@ public interface IContactoService
     void Anadir(Contacto contacto);
     void Actualizar(Contacto contacto);
     void Borrar(int id);
+    void ToggleFavorito(int id);
+
 }

@@ -6,16 +6,37 @@
 
 <div class="d-flex justify-content-between align-items-center mb-3">
     <h1>Contactos</h1>
-    <a asp-page="Crear" class="btn btn-primary">+ Nuevo contacto</a>
+    <div>
+        <a asp-page="Index" asp-route-soloFavoritos="false"
+           class="btn btn-outline-warning @(Model.SoloFavoritos ? "" : "active")">
+            <i class="bi bi-people"></i> Todos
+        </a>
+        <a asp-page="Index" asp-route-soloFavoritos="true"
+           class="btn btn-outline-warning @(Model.SoloFavoritos ? "active" : "")">
+            <i class="bi bi-star-fill"></i> Solo favoritos
+        </a>
+        <a asp-page="Crear" class="btn btn-primary">
+            <i class="bi bi-plus-circle"></i> Nuevo contacto
+        </a>
+    </div>
 </div>
 
 <form method="get" class="row g-2 mb-3">
-    <div class="col-auto">
-        <input asp-for="Busqueda" class="form-control" placeholder="Buscar por nombre" />
+    <div class="col-md-3">
+        <div class="input-group">
+            <span class="input-group-text">
+                <i class="bi bi-search"></i>
+            </span>
+            <input asp-for="Busqueda" class="form-control" placeholder="Búsqueda por nombre o apellidos" />
+        </div>
     </div>
     <div class="col-auto">
-        <button type="submit" class="btn btn-outline-secondary">Buscar</button>
-        <a asp-page="Index" class="btn btn-link">Limpiar</a>
+        <button type="submit" class="btn btn-secondary">
+            <i class="bi bi-search"></i> Buscar
+        </button>
+        <a asp-page="Index" class="btn btn-tertiary">
+            <i class="bi bi-x-circle"></i> Limpiar
+        </a>
     </div>
 </form>
 
@@ -34,32 +55,49 @@ else
         <thead class="table-dark">
             <tr>
                 <th>
-                    <a href="/Contactos?orden=nombre&direccion=@(Model.Orden == "nombre" && Model.Direccion == "asc" ? "desc" : "asc")&busqueda=@Model.Busqueda&pageNumber=@Model.CurrentPage" class="text-white text-decoration-none">
+                    <a href="/Contactos?orden=nombre&direccion=@(Model.Orden == "nombre" && Model.Direccion == "asc" ? "desc" : "asc")&busqueda=@Model.Busqueda&pageNumber=@Model.CurrentPage&soloFavoritos=@Model.SoloFavoritos"
+                       class="text-white text-decoration-none">
                         Nombre
                         @if (Model.Orden == "nombre")
                         {
-                            <span>@(Model.Direccion == "asc" ? "▲" : "▼")</span>
+                            <i class="bi @(Model.Direccion == "asc" ? "bi-sort-up" : "bi-sort-down")"></i>
+                        }
+                        else
+                        {
+                            <i class="bi bi-arrow-down-up"></i>
                         }
                     </a>
                 </th>
                 <th>
-                    <a href="/Contactos?orden=telefono&direccion=@(Model.Orden == "telefono" && Model.Direccion == "asc" ? "desc" : "asc")&busqueda=@Model.Busqueda&pageNumber=@Model.CurrentPage" class="text-white text-decoration-none">
-                        Teléfono
-                        @if (Model.Orden == "telefono")
+                    <a href="/Contactos?orden=apellidos&direccion=@(Model.Orden == "apellidos" && Model.Direccion == "asc" ? "desc" : "asc")&busqueda=@Model.Busqueda&pageNumber=@Model.CurrentPage&soloFavoritos=@Model.SoloFavoritos"
+                       class="text-white text-decoration-none">
+                        Apellidos
+                        @if (Model.Orden == "apellidos")
                         {
-                            <span>@(Model.Direccion == "asc" ? "▲" : "▼")</span>
+                            <i class="bi @(Model.Direccion == "asc" ? "bi-sort-up" : "bi-sort-down")"></i>
+                        }
+                        else
+                        {
+                            <i class="bi bi-arrow-down-up"></i>
                         }
                     </a>
                 </th>
                 <th>
-                    <a href="/Contactos?orden=email&direccion=@(Model.Orden == "email" && Model.Direccion == "asc" ? "desc" : "asc")&busqueda=@Model.Busqueda&pageNumber=@Model.CurrentPage" class="text-white text-decoration-none">
-                        Email
-                        @if (Model.Orden == "email")
+                    <a href="/Contactos?orden=apodo&direccion=@(Model.Orden == "apodo" && Model.Direccion == "asc" ? "desc" : "asc")&busqueda=@Model.Busqueda&pageNumber=@Model.CurrentPage&soloFavoritos=@Model.SoloFavoritos"
+                       class="text-white text-decoration-none">
+                        Apodo
+                        @if (Model.Orden == "apodo")
                         {
-                            <span>@(Model.Direccion == "asc" ? "▲" : "▼")</span>
+                            <i class="bi @(Model.Direccion == "asc" ? "bi-sort-up" : "bi-sort-down")"></i>
+                        }
+                        else
+                        {
+                            <i class="bi bi-arrow-down-up"></i>
                         }
                     </a>
                 </th>
+                <th>Teléfono</th>
+                <th>Email</th>
                 <th class="text-end">Acciones</th>
             </tr>
         </thead>
@@ -68,12 +106,26 @@ else
             {
                 <tr>
                     <td>@contacto.Nombre</td>
+                    <td>@contacto.Apellidos</td>
+                    <td>@contacto.Apodo</td>
                     <td>@contacto.Telefono</td>
                     <td>@contacto.Email</td>
                     <td class="text-end">
-                        <a asp-page="Editar" asp-route-id="@contacto.Id" class="btn btn-sm btn-outline-primary">Editar</a>
-                        <form method="post" asp-page-handler="Borrar" asp-route-id="@contacto.Id" class="d-inline" onsubmit="return confirm('¿Borrar a @contacto.Nombre?');">
-                            <button type="submit" class="btn btn-sm btn-outline-danger">Borrar</button>
+                        <form method="post" asp-page-handler="ToggleFavorito" asp-route-id="@contacto.Id" class="d-inline">
+                            <button type="submit"
+                                    class="btn btn-sm @(contacto.Favorito ? "btn-warning" : "btn-outline-warning")"
+                                    title="@(contacto.Favorito ? "Quitar de favoritos" : "Añadir a favoritos")">
+                                <i class="bi @(contacto.Favorito ? "bi-star-fill" : "bi-star")"></i>
+                            </button>
+                        </form>
+                        <a asp-page="Editar" asp-route-id="@contacto.Id" class="btn btn-sm btn-outline-primary">
+                            <i class="bi bi-pencil"></i>
+                        </a>
+                        <form method="post" asp-page-handler="Borrar" asp-route-id="@contacto.Id" class="d-inline"
+                              onsubmit="return confirm('¿Borrar a @contacto.Nombre?');">
+                            <button type="submit" class="btn btn-sm btn-outline-danger">
+                                <i class="bi bi-trash"></i>
+                            </button>
                         </form>
                     </td>
                 </tr>
@@ -81,22 +133,24 @@ else
         </tbody>
     </table>
 
-    <!-- Paginación -->
     <nav>
         <ul class="pagination justify-content-center">
             <li class="page-item @(Model.HasPreviousPage ? "" : "disabled")">
-                <a class="page-link" href="/Contactos?pageNumber=@(Model.CurrentPage - 1)&busqueda=@Model.Busqueda&orden=@Model.Orden&direccion=@Model.Direccion">Anterior</a>
+                <a class="page-link"
+                   href="/Contactos?pageNumber=@(Model.CurrentPage - 1)&busqueda=@Model.Busqueda&orden=@Model.Orden&direccion=@Model.Direccion&soloFavoritos=@Model.SoloFavoritos">Anterior</a>
             </li>
 
             @for (int i = 1; i <= Model.TotalPages; i++)
             {
                 <li class="page-item @(i == Model.CurrentPage ? "active" : "")">
-                    <a class="page-link" href="/Contactos?pageNumber=@i&busqueda=@Model.Busqueda&orden=@Model.Orden&direccion=@Model.Direccion">@i</a>
+                    <a class="page-link"
+                       href="/Contactos?pageNumber=@i&busqueda=@Model.Busqueda&orden=@Model.Orden&direccion=@Model.Direccion&soloFavoritos=@Model.SoloFavoritos">@i</a>
                 </li>
             }
 
             <li class="page-item @(Model.HasNextPage ? "" : "disabled")">
-                <a class="page-link" href="/Contactos?pageNumber=@(Model.CurrentPage + 1)&busqueda=@Model.Busqueda&orden=@Model.Orden&direccion=@Model.Direccion">Siguiente</a>
+                <a class="page-link"
+                   href="/Contactos?pageNumber=@(Model.CurrentPage + 1)&busqueda=@Model.Busqueda&orden=@Model.Orden&direccion=@Model.Direccion&soloFavoritos=@Model.SoloFavoritos">Siguiente</a>
             </li>
         </ul>
     </nav>

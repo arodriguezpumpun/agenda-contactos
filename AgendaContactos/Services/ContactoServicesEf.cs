@@ -28,6 +28,7 @@ public class ContactoServiceEf : IContactoService
         var existente = _db.Contactos.Find(contacto.Id);
         if (existente is null) return;
         existente.Nombre = contacto.Nombre;
+        existente.Apodo = contacto.Apodo;
         existente.Telefono = contacto.Telefono;
         existente.Email = contacto.Email;
         _db.SaveChanges();
@@ -38,6 +39,15 @@ public class ContactoServiceEf : IContactoService
         var contacto = _db.Contactos.Find(id);
         if (contacto is null) return;
         _db.Contactos.Remove(contacto);
+        _db.SaveChanges();
+    }
+
+    public void ToggleFavorito(int id)
+    {
+        var contacto = _db.Contactos.Find(id);
+        if (contacto is null) return;
+
+        contacto.Favorito = !contacto.Favorito;
         _db.SaveChanges();
     }
 }

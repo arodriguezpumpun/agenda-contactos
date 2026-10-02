@@ -27,6 +27,8 @@ public class EditarModel : PageModel
         {
             Id = contacto.Id,
             Nombre = contacto.Nombre,
+            Apellidos = contacto.Apellidos,
+            Apodo = contacto.Apodo,
             Telefono = contacto.Telefono,
             Email = contacto.Email
         };

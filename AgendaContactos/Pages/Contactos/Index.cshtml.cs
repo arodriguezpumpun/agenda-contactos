@@ -14,7 +14,6 @@ public class IndexModel : PageModel
         _contactoService = contactoService;
     }
 
-    // ─── Paginación ───
     private const int PageSize = 10;
 
     public int CurrentPage { get; set; } = 1;
@@ -30,35 +29,44 @@ public class IndexModel : PageModel
     [BindProperty(SupportsGet = true)]
     public int PageNumber { get; set; } = 1;
 
-    // ─── Ordenación ───
     [BindProperty(SupportsGet = true)]
-    public string Orden { get; set; } = "nombre";   // Columna por la que ordenar
+    public string Orden { get; set; } = "nombre";
 
     [BindProperty(SupportsGet = true)]
-    public string Direccion { get; set; } = "asc";  // asc o desc
+    public string Direccion { get; set; } = "asc";
+
+    [BindProperty(SupportsGet = true)]
+    public bool SoloFavoritos { get; set; } = false;
 
     public void OnGet()
     {
         var contactos = _contactoService.ObtenerTodos();
 
-        // 1. Filtrar por búsqueda
+        // 1. Filtrar por favoritos (si está activado)
+        if (SoloFavoritos)
+        {
+            contactos = contactos.Where(c => c.Favorito);
+        }
+
+        // 2. Filtrar por búsqueda (nombre o apellidos)
         if (!string.IsNullOrWhiteSpace(Busqueda))
         {
             contactos = contactos.Where(c =>
-                c.Nombre.Contains(Busqueda.Trim(), StringComparison.OrdinalIgnoreCase));
+                c.Nombre.Contains(Busqueda.Trim(), StringComparison.OrdinalIgnoreCase) ||
+                (c.Apellidos != null && c.Apellidos.Contains(Busqueda.Trim(), StringComparison.OrdinalIgnoreCase)));
         }
 
-        // 2. Ordenar
+        // 3. Ordenar
         contactos = Ordenar(contactos, Orden, Direccion);
 
-        // 3. Calcular total de páginas
+        // 4. Calcular total de páginas
         var totalItems = contactos.Count();
         TotalPages = (int)Math.Ceiling(totalItems / (double)PageSize);
 
-        // 4. Ajustar página actual
+        // 5. Ajustar página actual
         CurrentPage = PageNumber < 1 ? 1 : (PageNumber > TotalPages ? TotalPages : PageNumber);
 
-        // 5. Aplicar paginación
+        // 6. Aplicar paginación
         Contactos = contactos
             .Skip((CurrentPage - 1) * PageSize)
             .Take(PageSize)
@@ -74,6 +82,12 @@ public class IndexModel : PageModel
             "nombre" => esDesc
                 ? contactos.OrderByDescending(c => c.Nombre)
                 : contactos.OrderBy(c => c.Nombre),
+            "apellidos" => esDesc
+                ? contactos.OrderByDescending(c => c.Apellidos)
+                : contactos.OrderBy(c => c.Apellidos),
+            "apodo" => esDesc
+                ? contactos.OrderByDescending(c => c.Apodo)
+                : contactos.OrderBy(c => c.Apodo),
             "telefono" => esDesc
                 ? contactos.OrderByDescending(c => c.Telefono)
                 : contactos.OrderBy(c => c.Telefono),
@@ -88,6 +102,12 @@ public class IndexModel : PageModel
     {
         _contactoService.Borrar(id);
         TempData["Mensaje"] = "Contacto borrado.";
+        return RedirectToPage();
+    }
+
+    public IActionResult OnPostToggleFavorito(int id)
+    {
+        _contactoService.ToggleFavorito(id);
         return RedirectToPage();
     }
 }

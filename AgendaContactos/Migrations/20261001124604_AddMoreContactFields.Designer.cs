@@ -2,6 +2,7 @@
 using AgendaContactos.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -9,9 +10,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AgendaContactos.Migrations
 {
     [DbContext(typeof(AgendaDbContext))]
-    partial class AgendaDbContextModelSnapshot : ModelSnapshot
+    [Migration("20261001124604_AddMoreContactFields")]
+    partial class AddMoreContactFields
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "10.0.12");
@@ -26,7 +29,7 @@ namespace AgendaContactos.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("Apodo")
+                    b.Property<string>("Categoria")
                         .HasMaxLength(50)
                         .HasColumnType("TEXT");
 
@@ -34,12 +37,20 @@ namespace AgendaContactos.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
+                    b.Property<string>("Empresa")
+                        .HasMaxLength(100)
+                        .HasColumnType("TEXT");
+
                     b.Property<bool>("Favorito")
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("Nombre")
                         .IsRequired()
-                        .HasMaxLength(50)
+                        .HasMaxLength(100)
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Notas")
+                        .HasMaxLength(500)
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Telefono")
@@ -53,201 +64,161 @@ namespace AgendaContactos.Migrations
                         new
                         {
                             Id = 1,
-                            Apellidos = "García",
-                            Apodo = "La Jefa",
                             Email = "ana@ejemplo.com",
-                            Favorito = true,
-                            Nombre = "Ana",
+                            Favorito = false,
+                            Nombre = "Ana García",
                             Telefono = "600111222"
                         },
                         new
                         {
                             Id = 2,
-                            Apellidos = "Pérez",
-                            Apodo = "Luisito",
                             Email = "luis@ejemplo.com",
                             Favorito = false,
-                            Nombre = "Luis",
+                            Nombre = "Luis Pérez",
                             Telefono = "600333444"
                         },
                         new
                         {
                             Id = 3,
-                            Apellidos = "López",
-                            Apodo = "Mery",
                             Email = "maria@ejemplo.com",
-                            Favorito = true,
-                            Nombre = "María",
+                            Favorito = false,
+                            Nombre = "María López",
                             Telefono = "600555666"
                         },
                         new
                         {
                             Id = 4,
-                            Apellidos = "Ruiz",
-                            Apodo = "Carlitos",
                             Email = "carlos@ejemplo.com",
                             Favorito = false,
-                            Nombre = "Carlos",
+                            Nombre = "Carlos Ruiz",
                             Telefono = "600777888"
                         },
                         new
                         {
                             Id = 5,
-                            Apellidos = "Fernández",
-                            Apodo = "Laurita",
                             Email = "laura@ejemplo.com",
                             Favorito = false,
-                            Nombre = "Laura",
+                            Nombre = "Laura Fernández",
                             Telefono = "600999000"
                         },
                         new
                         {
                             Id = 6,
-                            Apellidos = "Sánchez",
-                            Apodo = "Javi",
                             Email = "javier@ejemplo.com",
-                            Favorito = true,
-                            Nombre = "Javier",
+                            Favorito = false,
+                            Nombre = "Javier Sánchez",
                             Telefono = "601111222"
                         },
                         new
                         {
                             Id = 7,
-                            Apellidos = "Martín",
-                            Apodo = "Elenita",
                             Email = "elena@ejemplo.com",
                             Favorito = false,
-                            Nombre = "Elena",
+                            Nombre = "Elena Martín",
                             Telefono = "601333444"
                         },
                         new
                         {
                             Id = 8,
-                            Apellidos = "Gómez",
-                            Apodo = "Davo",
                             Email = "david@ejemplo.com",
                             Favorito = false,
-                            Nombre = "David",
+                            Nombre = "David Gómez",
                             Telefono = "601555666"
                         },
                         new
                         {
                             Id = 9,
-                            Apellidos = "Jiménez",
-                            Apodo = "Sarita",
                             Email = "sara@ejemplo.com",
-                            Favorito = true,
-                            Nombre = "Sara",
+                            Favorito = false,
+                            Nombre = "Sara Jiménez",
                             Telefono = "601777888"
                         },
                         new
                         {
                             Id = 10,
-                            Apellidos = "Díaz",
-                            Apodo = "Pablito",
                             Email = "pablo@ejemplo.com",
                             Favorito = false,
-                            Nombre = "Pablo",
+                            Nombre = "Pablo Díaz",
                             Telefono = "601999000"
                         },
                         new
                         {
                             Id = 11,
-                            Apellidos = "Torres",
-                            Apodo = "Lucy",
                             Email = "lucia@ejemplo.com",
                             Favorito = false,
-                            Nombre = "Lucía",
+                            Nombre = "Lucía Torres",
                             Telefono = "602111222"
                         },
                         new
                         {
                             Id = 12,
-                            Apellidos = "Ruiz",
-                            Apodo = "Alber",
                             Email = "alberto@ejemplo.com",
                             Favorito = false,
-                            Nombre = "Alberto",
+                            Nombre = "Alberto Ruiz",
                             Telefono = "602333444"
                         },
                         new
                         {
                             Id = 13,
-                            Apellidos = "Vega",
-                            Apodo = "Carmencita",
                             Email = "carmen@ejemplo.com",
-                            Favorito = true,
-                            Nombre = "Carmen",
+                            Favorito = false,
+                            Nombre = "Carmen Vega",
                             Telefono = "602555666"
                         },
                         new
                         {
                             Id = 14,
-                            Apellidos = "Moreno",
-                            Apodo = "Raulito",
                             Email = "raul@ejemplo.com",
                             Favorito = false,
-                            Nombre = "Raúl",
+                            Nombre = "Raúl Moreno",
                             Telefono = "602777888"
                         },
                         new
                         {
                             Id = 15,
-                            Apellidos = "Romero",
-                            Apodo = "Martita",
                             Email = "marta@ejemplo.com",
                             Favorito = false,
-                            Nombre = "Marta",
+                            Nombre = "Marta Romero",
                             Telefono = "602999000"
                         },
                         new
                         {
                             Id = 16,
-                            Apellidos = "Navarro",
-                            Apodo = "Sergi",
                             Email = "sergio@ejemplo.com",
                             Favorito = false,
-                            Nombre = "Sergio",
+                            Nombre = "Sergio Navarro",
                             Telefono = "603111222"
                         },
                         new
                         {
                             Id = 17,
-                            Apellidos = "Gil",
-                            Apodo = "Nuri",
                             Email = "nuria@ejemplo.com",
-                            Favorito = true,
-                            Nombre = "Nuria",
+                            Favorito = false,
+                            Nombre = "Nuria Gil",
                             Telefono = "603333444"
                         },
                         new
                         {
                             Id = 18,
-                            Apellidos = "Serrano",
-                            Apodo = "Andresito",
                             Email = "andres@ejemplo.com",
                             Favorito = false,
-                            Nombre = "Andrés",
+                            Nombre = "Andrés Serrano",
                             Telefono = "603555666"
                         },
                         new
                         {
                             Id = 19,
-                            Apellidos = "Molina",
-                            Apodo = "Paulita",
                             Email = "paula@ejemplo.com",
                             Favorito = false,
-                            Nombre = "Paula",
+                            Nombre = "Paula Molina",
                             Telefono = "603777888"
                         },
                         new
                         {
                             Id = 20,
-                            Apellidos = "Castro",
-                            Apodo = "Ivanito",
                             Email = "ivan@ejemplo.com",
                             Favorito = false,
-                            Nombre = "Iván",
+                            Nombre = "Iván Castro",
                             Telefono = "603999000"
                         });
                 });
