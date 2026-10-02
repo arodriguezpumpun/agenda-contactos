@@ -37,21 +37,20 @@
 <div class="d-flex justify-content-between align-items-center mb-3">
     
     <!-- Buscador (izquierda) -->
-    <form method="get" class="row g-2">
+    <form method="get" class="row g-2" id="searchForm">
         <div class="col-auto">
-            <div class="input-group">
+            <div class="input-group input-group-sm">
                 <span class="input-group-text">
                     <i class="bi bi-search"></i>
                 </span>
-                <input asp-for="Busqueda" class="form-control" placeholder="Búsqueda por nombre o apellidos"
-                       style="min-width: 250px;" />
+                <input asp-for="Busqueda" class="form-control" id="searchInput" placeholder="Búsqueda por nombre o apellidos" style="min-width: 250px;" />
             </div>
         </div>
         <div class="col-auto">
-            <button type="submit" class="btn btn-secondary">
+            <button type="submit" class="btn btn-sm btn-secondary">
                 <i class="bi bi-search"></i> Buscar
             </button>
-            <a asp-page="Index" class="btn btn-tertiary">
+            <a asp-page="Index" class="btn btn-sm btn-tertiary">
                 <i class="bi bi-x-circle"></i> Limpiar
             </a>
         </div>
@@ -235,3 +234,34 @@ Ana,García,La Jefa,600111222,ana@ejemplo.com,Sí</code></pre>
         </div>
     </div>
 </div>
+
+<script>
+    (function () {
+        const form = document.getElementById('searchForm');
+        const input = document.getElementById('searchInput');
+        let timeout = null;
+
+        // ⬇️ RECUPERAR EL FOCO AL CARGAR LA PÁGINA
+        if (input.value.trim().length > 0) {
+            input.focus();
+            // Poner el cursor al final del texto
+            input.setSelectionRange(input.value.length, input.value.length);
+        }
+
+        // Búsqueda en tiempo real (con debounce)
+        input.addEventListener('input', function () {
+            clearTimeout(timeout);
+            timeout = setTimeout(function () {
+                form.submit();
+            }, 500);
+        });
+
+        // Búsqueda al pulsar Enter
+        input.addEventListener('keydown', function (e) {
+            if (e.key === 'Enter') {
+                clearTimeout(timeout);
+                form.submit();
+            }
+        });
+    })();
+</script>
