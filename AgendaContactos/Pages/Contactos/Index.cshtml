@@ -41,16 +41,20 @@
                 <span class="input-group-text">
                     <i class="bi bi-search"></i>
                 </span>
-                <input asp-for="Busqueda" class="form-control" id="searchInput" placeholder="Búsqueda por nombre o apellidos" style="min-width: 250px;" />
+                <div class="position-relative">
+                    <input asp-for="Busqueda" class="form-control pe-5" id="searchInput" placeholder="Búsqueda por nombre o apellidos" style="min-width: 250px;" />
+                    <button type="button" id="clearSearch" 
+                            class="btn btn-link position-absolute top-50 end-0 translate-middle-y text-decoration-none text-muted pe-2"
+                            style="display: none;">
+                        <i class="bi bi-x-circle-fill"></i>
+                    </button>
+                </div>
             </div>
         </div>
         <div class="col-auto">
-            <button type="submit" class="btn btn-sm btn-secondary">
+            <button type="submit" class="btn btn-secondary">
                 <i class="bi bi-search"></i> Buscar
             </button>
-            <a asp-page="Index" class="btn btn-sm btn-tertiary">
-                <i class="bi bi-x-circle"></i> Limpiar
-            </a>
         </div>
     </form>
 
@@ -267,7 +271,15 @@ Ana,García,La Jefa,600111222,ana@ejemplo.com,Sí</code></pre>
     (function () {
         const form = document.getElementById('searchForm');
         const input = document.getElementById('searchInput');
+        const clearBtn = document.getElementById('clearSearch');
         let timeout = null;
+
+        function toggleClearButton() {
+            clearBtn.style.display = input.value.trim().length > 0 ? 'block' : 'none';
+        }
+
+        toggleClearButton();
+        input.addEventListener('input', toggleClearButton);
 
         if (input.value.trim().length > 0) {
             input.focus();
@@ -286,6 +298,13 @@ Ana,García,La Jefa,600111222,ana@ejemplo.com,Sí</code></pre>
                 clearTimeout(timeout);
                 form.submit();
             }
+        });
+
+        // Limpiar al pulsar la X
+        clearBtn.addEventListener('click', function () {
+            input.value = '';
+            clearTimeout(timeout);
+            form.submit();
         });
     })();
 </script>
