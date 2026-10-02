@@ -3,7 +3,7 @@ namespace AgendaContactos.Services;
 
 public interface IContactoService
 {
-    IEnumerable<Contacto> ObtenerTodos();
+    IEnumerable<Contacto> ObtenerTodos(string usuarioId);
     Contacto? ObtenerPorId(int id);
     void Anadir(Contacto contacto);
     void Actualizar(Contacto contacto);

@@ -1,10 +1,13 @@
+using System.Security.Claims;
 using AgendaContactos.Models;
 using AgendaContactos.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace AgendaContactos.Pages.Contactos;
 
+[Authorize]
 public class IndexModel : PageModel
 {
     private readonly IContactoService _contactoService;
@@ -40,7 +43,8 @@ public class IndexModel : PageModel
 
     public void OnGet()
     {
-        var contactos = _contactoService.ObtenerTodos();
+        var usuarioId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        var contactos = _contactoService.ObtenerTodos(usuarioId);
 
         // 1. Filtrar por favoritos (si está activado)
         if (SoloFavoritos)

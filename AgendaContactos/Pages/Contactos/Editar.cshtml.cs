@@ -1,10 +1,12 @@
 using AgendaContactos.Models;
 using AgendaContactos.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace AgendaContactos.Pages.Contactos;
 
+[Authorize]
 public class EditarModel : PageModel
 {
     private readonly IContactoService _contactoService;

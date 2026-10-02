@@ -8,11 +8,14 @@ public class ContactoService : IContactoService
     private readonly object _lock = new();
     private int _siguienteId = 1;
 
-    public IEnumerable<Contacto> ObtenerTodos()
+    public IEnumerable<Contacto> ObtenerTodos(string usuarioId)
     {
         lock (_lock)
         {
-            return _contactos.OrderBy(c => c.Nombre).ToList();
+            return _contactos
+                .Where(c => c.UsuarioId == usuarioId)
+                .OrderBy(c => c.Nombre)
+                .ToList();
         }
     }
 

@@ -2,11 +2,16 @@ using AgendaContactos.Data;
 using AgendaContactos.Models;
 using AgendaContactos.Services;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Identity;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddDbContext<AgendaDbContext>(options =>
 options.UseSqlite(builder.Configuration.GetConnectionString("Agenda")));
+
+builder.Services.AddDefaultIdentity<ApplicationUser>(options => 
+    options.SignIn.RequireConfirmedAccount = false)
+    .AddEntityFrameworkStores<AgendaDbContext>();
 
 // Add services to the container.
 builder.Services.AddRazorPages();
@@ -26,6 +31,7 @@ app.UseHttpsRedirection();
 
 app.UseRouting();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapStaticAssets();

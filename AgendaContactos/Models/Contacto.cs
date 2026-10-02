@@ -1,10 +1,16 @@
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace AgendaContactos.Models;
 
 public class Contacto
 {
     public int Id { get; set; }
+
+    public string? UsuarioId { get; set; }
+
+    [ForeignKey("UsuarioId")]
+    public ApplicationUser? Usuario { get; set; }
 
     [Required(ErrorMessage = "El nombre es obligatorio.")]
     [StringLength(50, ErrorMessage = "Máximo 50 caracteres.")]

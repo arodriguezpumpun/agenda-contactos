@@ -12,8 +12,11 @@ public class ContactoServiceEf : IContactoService
         _db = db;
     }
 
-    public IEnumerable<Contacto> ObtenerTodos() =>
-        _db.Contactos.OrderBy(c => c.Nombre).ToList();
+    public IEnumerable<Contacto> ObtenerTodos(string usuarioId) =>
+        _db.Contactos
+            .Where(c => c.UsuarioId == usuarioId)
+            .OrderBy(c => c.Nombre)
+            .ToList();
 
     public Contacto? ObtenerPorId(int id) => _db.Contactos.Find(id);
 

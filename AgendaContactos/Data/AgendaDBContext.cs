@@ -1,9 +1,11 @@
 using AgendaContactos.Models;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace AgendaContactos.Data;
 
-public class AgendaDbContext : DbContext
+public class AgendaDbContext : IdentityDbContext<ApplicationUser>
 {
     public AgendaDbContext(DbContextOptions<AgendaDbContext> options)
         : base(options) { }
@@ -12,6 +14,10 @@ public class AgendaDbContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        modelBuilder.Entity<IdentityPasskeyData>().HasNoKey();
+
+        base.OnModelCreating(modelBuilder);
+
         modelBuilder.Entity<Contacto>().HasData(
             new Contacto { Id = 1, Nombre = "Ana", Apellidos = "García", Apodo = "La Jefa", Email = "ana@ejemplo.com", Telefono = "600111222", Favorito = true },
             new Contacto { Id = 2, Nombre = "Luis", Apellidos = "Pérez", Apodo = "Luisito", Email = "luis@ejemplo.com", Telefono = "600333444", Favorito = false },
