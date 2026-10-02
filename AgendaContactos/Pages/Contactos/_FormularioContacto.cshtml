@@ -3,12 +3,33 @@
 <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
 <div class="row">
-    <div class="col-md-6 mb-3">
+    <div class="col-md-4 mb-3">
+        <label for="FotoFile" class="form-label">Foto</label>
+        <input type="file" name="FotoFile" id="FotoFile" class="d-none" accept="image/*" />
+        <label for="FotoFile" class="btn btn-outline-secondary w-100">
+            <i class="bi bi-upload"></i> Subir foto
+        </label>
+    
+        <small class="form-text text-muted">Formatos: JPG, PNG, GIF (opcional)</small>
+    
+        <!-- Nombre del archivo seleccionado -->
+        <div id="fileName" class="mt-2 text-muted small"></div>
+        
+        @if (!string.IsNullOrEmpty(Model.FotoUrl))
+        {
+            <div class="mt-2">
+                <img src="@Model.FotoUrl" alt="Foto actual" class="rounded-circle"
+                     style="width: 60px; height: 60px; object-fit: cover;" />
+                <small class="d-block text-muted">Foto actual</small>
+            </div>
+        }
+    </div>
+    <div class="col-md-4 mb-4">
         <label asp-for="Nombre" class="form-label">Nombre*</label>
         <input asp-for="Nombre" class="form-control" />
         <span asp-validation-for="Nombre" class="text-danger"></span>
     </div>
-    <div class="col-md-6 mb-3">
+    <div class="col-md-4 mb-4">
         <label asp-for="Apellidos" class="form-label">Apellidos*</label>
         <input asp-for="Apellidos" class="form-control" />
         <span asp-validation-for="Apellidos" class="text-danger"></span>
@@ -16,20 +37,19 @@
 </div>
 
 <div class="row">
-    <div class="col-md-6 mb-3">
-        <label asp-for="Apodo" class="form-label">Apodo (opcional)</label>
+    <div class="col-md-4 mb-4">
+        <label asp-for="Apodo" class="form-label"></label>
         <input asp-for="Apodo" class="form-control" />
         <span asp-validation-for="Apodo" class="text-danger"></span>
-    </div>
-</div>
+        <small class="form-text text-muted">(opcional)</small>
 
-<div class="row">
-    <div class="col-md-6 mb-3">
+    </div>
+    <div class="col-md-4 mb-4">
         <label asp-for="Email" class="form-label">Email*</label>
         <input asp-for="Email" class="form-control" type="email" />
         <span asp-validation-for="Email" class="text-danger"></span>
     </div>
-    <div class="col-md-6 mb-3">
+    <div class="col-md-4 mb-4">
         <label asp-for="Telefono" class="form-label">Teléfono*</label>
         <input asp-for="Telefono" class="form-control" />
         <span asp-validation-for="Telefono" class="text-danger"></span>

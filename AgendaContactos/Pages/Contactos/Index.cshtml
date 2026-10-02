@@ -54,6 +54,7 @@ else
     <table class="table table-striped table-hover align-middle">
         <thead class="table-dark">
             <tr>
+                <th style="width: 60px;"></th> <!-- ⬅️ Columna de foto -->
                 <th>
                     <a href="/Contactos?orden=nombre&direccion=@(Model.Orden == "nombre" && Model.Direccion == "asc" ? "desc" : "asc")&busqueda=@Model.Busqueda&pageNumber=@Model.CurrentPage&soloFavoritos=@Model.SoloFavoritos"
                        class="text-white text-decoration-none">
@@ -105,6 +106,20 @@ else
             @foreach (var contacto in Model.Contactos)
             {
                 <tr>
+                    <td>
+                        @if (!string.IsNullOrEmpty(contacto.FotoUrl))
+                        {
+                            <img src="@contacto.FotoUrl" alt="@contacto.Nombre" class="rounded-circle"
+                                 style="width: 40px; height: 40px; object-fit: cover;" />
+                        }
+                        else
+                        {
+                            <div class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center"
+                                 style="width: 40px; height: 40px; font-weight: bold;">
+                                @contacto.Nombre.Substring(0, 1).ToUpper()
+                            </div>
+                        }
+                    </td>
                     <td>@contacto.Nombre</td>
                     <td>@contacto.Apellidos</td>
                     <td>@contacto.Apodo</td>

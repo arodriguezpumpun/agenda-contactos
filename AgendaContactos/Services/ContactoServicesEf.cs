@@ -30,7 +30,9 @@ public class ContactoServiceEf : IContactoService
     {
         var existente = _db.Contactos.Find(contacto.Id);
         if (existente is null) return;
+        existente.FotoUrl = contacto.FotoUrl;
         existente.Nombre = contacto.Nombre;
+        existente.Apellidos = contacto.Apellidos;
         existente.Apodo = contacto.Apodo;
         existente.Telefono = contacto.Telefono;
         existente.Email = contacto.Email;

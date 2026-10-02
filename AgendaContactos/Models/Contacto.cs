@@ -7,6 +7,10 @@ public class Contacto
 {
     public int Id { get; set; }
 
+    [Display(Name = "Foto")]
+    [StringLength(500)]
+    public string? FotoUrl { get; set; }
+
     public string? UsuarioId { get; set; }
 
     [ForeignKey("UsuarioId")]

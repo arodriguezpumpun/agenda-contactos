@@ -20,19 +20,36 @@ public class CrearModel : PageModel
     [BindProperty]
     public Contacto Contacto { get; set; } = new();
 
+    [BindProperty]
+    public IFormFile? FotoFile { get; set; }
+
     public void OnGet()
     {
-        
+
     }
 
-    public IActionResult OnPost()
+public async Task<IActionResult> OnPost()
+{
+    if (!ModelState.IsValid) return Page();
+
+    if (FotoFile != null && FotoFile.Length > 0)
     {
-        if (!ModelState.IsValid) return Page();
+        var fileName = Guid.NewGuid().ToString() + Path.GetExtension(FotoFile.FileName);
+        var filePath = Path.Combine("wwwroot/images/contactos", fileName);
 
-        Contacto.UsuarioId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        Directory.CreateDirectory(Path.GetDirectoryName(filePath)!);
 
-        _contactoService.Anadir(Contacto);
-        TempData["Mensaje"] = $"Contacto {Contacto.Nombre} añadido.";
-        return RedirectToPage("Index");
+        using (var stream = new FileStream(filePath, FileMode.Create))
+        {
+            await FotoFile.CopyToAsync(stream);
+        }
+
+        Contacto.FotoUrl = "/images/contactos/" + fileName;
     }
+
+    Contacto.UsuarioId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+    _contactoService.Anadir(Contacto);
+    TempData["Mensaje"] = $"Contacto {Contacto.Nombre} añadido.";
+    return RedirectToPage("Index");
+}
 }

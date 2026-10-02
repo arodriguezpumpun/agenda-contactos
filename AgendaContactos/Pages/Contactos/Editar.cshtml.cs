@@ -38,6 +38,9 @@ public class EditarModel : PageModel
         return Page();
     }
 
+    [BindProperty]
+    public IFormFile? FotoFile { get; set; }
+
     public IActionResult OnPost(int id)
     {
         if (!ModelState.IsValid) return Page();

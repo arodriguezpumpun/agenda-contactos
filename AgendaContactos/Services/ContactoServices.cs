@@ -43,6 +43,7 @@ public class ContactoService : IContactoService
             var existente = _contactos.FirstOrDefault(c => c.Id == contacto.Id);
             if (existente is null) return;
 
+            existente.FotoUrl = contacto.FotoUrl;
             existente.Nombre = contacto.Nombre;
             existente.Apellidos = contacto.Apellidos;
             existente.Apodo = contacto.Apodo;
