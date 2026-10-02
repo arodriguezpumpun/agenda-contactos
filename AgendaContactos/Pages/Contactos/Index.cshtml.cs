@@ -117,4 +117,48 @@ public class IndexModel : PageModel
         _contactoService.ToggleFavorito(id);
         return RedirectToPage();
     }
+
+    public IActionResult OnGetExportarCsv()
+    {
+        // Obtener todos los contactos del usuario
+        var usuarioId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        var contactos = _contactoService.ObtenerTodos(usuarioId).ToList();
+
+        // Construir el CSV
+        var csv = new System.Text.StringBuilder();
+        csv.AppendLine("Nombre,Apellidos,Apodo,Telefono,Email,Notas,Favorito");
+
+        foreach (var contacto in contactos)
+        {
+            // Escapar comillas y comas para CSV
+            var nombre = EscapeCsv(contacto.Nombre);
+            var apellidos = EscapeCsv(contacto.Apellidos ?? "");
+            var apodo = EscapeCsv(contacto.Apodo ?? "");
+            var telefono = EscapeCsv(contacto.Telefono ?? "");
+            var email = EscapeCsv(contacto.Email);
+            var favorito = contacto.Favorito ? "Sí" : "No";
+
+            csv.AppendLine($"{nombre},{apellidos},{apodo},{telefono},{email},{favorito}");
+        }
+
+        // Devolver el archivo CSV
+        var bytes = System.Text.Encoding.UTF8.GetBytes(csv.ToString());
+        var fileName = $"contactos_{DateTime.Now:yyyyMMdd_HHmmss}.csv";
+
+        return File(bytes, "text/csv", fileName);
+    }
+
+    private string EscapeCsv(string value)
+    {
+        if (string.IsNullOrEmpty(value))
+            return "";
+
+        // Si contiene coma, comilla o salto de línea, escapar con comillas dobles
+        if (value.Contains(",") || value.Contains("\"") || value.Contains("\n") || value.Contains("\r"))
+        {
+            return "\"" + value.Replace("\"", "\"\"") + "\"";
+        }
+
+        return value;
+    }
 }
