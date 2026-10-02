@@ -485,3 +485,6 @@ $RECYCLE.BIN/
 *.db
 *.db-shm
 *.db-wal
+
+wwwroot/images/contactos/*
+!wwwroot/images/contactos/.gitkeep

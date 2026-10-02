@@ -41,18 +41,23 @@ public class IndexModel : PageModel
     [BindProperty(SupportsGet = true)]
     public bool SoloFavoritos { get; set; } = false;
 
+    public int TotalContactos { get; set; }
+    public int ContactosFiltrados { get; set; }
+
     public void OnGet()
     {
         var usuarioId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-        var contactos = _contactoService.ObtenerTodos(usuarioId);
+        var todosLosContactos = _contactoService.ObtenerTodos(usuarioId);
 
-        // 1. Filtrar por favoritos (si está activado)
+        TotalContactos = todosLosContactos.Count();
+
+        var contactos = todosLosContactos;
+
         if (SoloFavoritos)
         {
             contactos = contactos.Where(c => c.Favorito);
         }
 
-        // 2. Filtrar por búsqueda (nombre o apellidos)
         if (!string.IsNullOrWhiteSpace(Busqueda))
         {
             contactos = contactos.Where(c =>
@@ -60,17 +65,15 @@ public class IndexModel : PageModel
                 (c.Apellidos != null && c.Apellidos.Contains(Busqueda.Trim(), StringComparison.OrdinalIgnoreCase)));
         }
 
-        // 3. Ordenar
+        ContactosFiltrados = contactos.Count();
+
         contactos = Ordenar(contactos, Orden, Direccion);
 
-        // 4. Calcular total de páginas
         var totalItems = contactos.Count();
         TotalPages = (int)Math.Ceiling(totalItems / (double)PageSize);
 
-        // 5. Ajustar página actual
         CurrentPage = PageNumber < 1 ? 1 : (PageNumber > TotalPages ? TotalPages : PageNumber);
 
-        // 6. Aplicar paginación
         Contactos = contactos
             .Skip((CurrentPage - 1) * PageSize)
             .Take(PageSize)
