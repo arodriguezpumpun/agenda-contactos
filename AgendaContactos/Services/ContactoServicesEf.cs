@@ -36,6 +36,7 @@ public class ContactoServiceEf : IContactoService
         existente.Apodo = contacto.Apodo;
         existente.Telefono = contacto.Telefono;
         existente.Email = contacto.Email;
+        existente.Categoria = contacto.Categoria;
         existente.Notas = contacto.Notas;
         existente.Favorito = contacto.Favorito;
 

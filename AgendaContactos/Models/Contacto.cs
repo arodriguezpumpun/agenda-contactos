@@ -42,6 +42,10 @@ public class Contacto
     [Display(Name = "Notas")]
     public string? Notas { get; set; }
 
+    [StringLength(50)]
+    [Display(Name = "Categoría")]
+    public string? Categoria { get; set; }
+
     [Display(Name = "Favorito")]
     public bool Favorito { get; set; } = false;
 }

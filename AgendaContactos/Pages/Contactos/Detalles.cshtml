@@ -16,13 +16,12 @@
             <div class="col-md-3 text-center mb-3 mb-md-0">
                 @if (!string.IsNullOrEmpty(Model.Contacto.FotoUrl))
                 {
-                    <img src="@Model.Contacto.FotoUrl" alt="@Model.Contacto.Nombre" 
-                         class="rounded-circle" 
+                    <img src="@Model.Contacto.FotoUrl" alt="@Model.Contacto.Nombre" class="rounded-circle"
                          style="width: 150px; height: 150px; object-fit: cover;" />
                 }
                 else
                 {
-                    <div class="rounded-circle bg-primary text-white d-inline-flex align-items-center justify-content-center" 
+                    <div class="rounded-circle bg-primary text-white d-inline-flex align-items-center justify-content-center"
                          style="width: 150px; height: 150px; font-size: 3rem; font-weight: bold;">
                         @Model.Contacto.Nombre.Substring(0, 1).ToUpper()
                     </div>
@@ -59,6 +58,14 @@
                 </dd>
             }
 
+            @if (!string.IsNullOrEmpty(Model.Contacto.Categoria))
+            {
+                <dt class="col-sm-3"><i class="bi bi-tag"></i> Categoría</dt>
+                <dd class="col-sm-9">
+                    <span class="badge bg-secondary">@Model.Contacto.Categoria</span>
+                </dd>
+            }
+
             <dt class="col-sm-3"><i class="bi bi-star"></i> Favorito</dt>
             <dd class="col-sm-9">
                 @if (Model.Contacto.Favorito)
@@ -85,9 +92,7 @@
             <a asp-page="Editar" asp-route-id="@Model.Contacto.Id" class="btn btn-primary">
                 <i class="bi bi-pencil"></i> Editar
             </a>
-            <button type="button" class="btn btn-danger" 
-                    data-bs-toggle="modal" 
-                    data-bs-target="#borrarModal"
+            <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#borrarModal"
                     data-contacto-id="@Model.Contacto.Id"
                     data-contacto-nombre="@Model.Contacto.Nombre @Model.Contacto.Apellidos">
                 <i class="bi bi-trash"></i> Borrar

@@ -28,7 +28,8 @@
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
                     <i class="bi bi-x-circle"></i> Cancelar
                 </button>
-                <form method="post" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Page("/Index", new { area = "" })" class="d-inline">
+                <form method="post" asp-area="Identity" asp-page="/Account/Logout"
+                      asp-route-returnUrl="@Url.Page("/Index", new { area = "" })" class="d-inline">
                     <button type="submit" class="btn btn-danger-soft">
                         <i class="bi bi-box-arrow-right"></i> Sí, cerrar sesión
                     </button>
@@ -72,7 +73,8 @@
                             <span class="navbar-text me-4">
                                 <i class="bi bi-person-circle"></i> ¡Hola, @User.Identity.Name!
                             </span>
-                            <button type="button" class="btn btn-danger-soft btn-sm" data-bs-toggle="modal" data-bs-target="#logoutModal">
+                            <button type="button" class="btn btn-danger-soft btn-sm" data-bs-toggle="modal"
+                                    data-bs-target="#logoutModal">
                                 <i class="bi bi-box-arrow-right"></i> Cerrar sesión
                             </button>
                         </div>
@@ -115,29 +117,32 @@
     @await RenderSectionAsync("Scripts", required: false)
 
     <script>
-        (function () {
-            const toggle = document.getElementById('theme-toggle');
-            const html = document.documentElement;
+            (function () {
+                const toggle = document.getElementById('theme-toggle');
+                const html = document.documentElement;
 
-            const savedTheme = localStorage.getItem('theme') || 'light';
-            html.setAttribute('data-bs-theme', savedTheme);
-            updateButton(savedTheme);
+                const savedTheme = localStorage.getItem('theme') || 'light';
+                html.setAttribute('data-bs-theme', savedTheme);
+                updateButton(savedTheme);
 
-            toggle.addEventListener('click', function () {
-                const currentTheme = html.getAttribute('data-bs-theme');
-                const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+                toggle.addEventListener('click', function () {
+                    const currentTheme = html.getAttribute('data-bs-theme');
+                    const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
 
-                html.setAttribute('data-bs-theme', newTheme);
-                localStorage.setItem('theme', newTheme);
-                updateButton(newTheme);
-            });
+                    html.setAttribute('data-bs-theme', newTheme);
+                    localStorage.setItem('theme', newTheme);
+                    updateButton(newTheme);
+                });
 
-            function updateButton(theme) {
-                const icon = document.getElementById('theme-icon');
-                icon.className = theme === 'dark' ? 'bi bi-sun' : 'bi bi-moon-stars';
-            }
-        })();
+                function updateButton(theme) {
+                    const icon = document.getElementById('theme-icon');
+                    icon.className = theme === 'dark' ? 'bi bi-sun' : 'bi bi-moon-stars';
+                }
+            })();
     </script>
+
+    <script src="https://unpkg.com/htmx.org@1.9.10"></script>
+
 </body>
 
 </html>

@@ -39,6 +39,9 @@ public class IndexModel : PageModel
     public string Direccion { get; set; } = "asc";
 
     [BindProperty(SupportsGet = true)]
+    public string? CategoriaFiltro { get; set; }
+
+    [BindProperty(SupportsGet = true)]
     public bool SoloFavoritos { get; set; } = false;
 
     public int TotalContactos { get; set; }
@@ -65,6 +68,11 @@ public class IndexModel : PageModel
                 (c.Apellidos != null && c.Apellidos.Contains(Busqueda.Trim(), StringComparison.OrdinalIgnoreCase)));
         }
 
+        if (!string.IsNullOrWhiteSpace(CategoriaFiltro))
+        {
+            contactos = contactos.Where(c => c.Categoria == CategoriaFiltro);
+        }
+
         ContactosFiltrados = contactos.Count();
 
         contactos = Ordenar(contactos, Orden, Direccion);
@@ -78,6 +86,54 @@ public class IndexModel : PageModel
             .Skip((CurrentPage - 1) * PageSize)
             .Take(PageSize)
             .ToList();
+    }
+
+    public IActionResult OnGetTabla()
+    {
+        if (!Request.Headers.ContainsKey("HX-Request"))
+        {
+            return RedirectToPage("Index");
+        }
+
+        var usuarioId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        var todosLosContactos = _contactoService.ObtenerTodos(usuarioId);
+
+        TotalContactos = todosLosContactos.Count();
+
+        var contactos = todosLosContactos;
+
+        if (SoloFavoritos)
+        {
+            contactos = contactos.Where(c => c.Favorito);
+        }
+
+        if (!string.IsNullOrWhiteSpace(Busqueda))
+        {
+            contactos = contactos.Where(c =>
+                c.Nombre.Contains(Busqueda.Trim(), StringComparison.OrdinalIgnoreCase) ||
+                (c.Apellidos != null && c.Apellidos.Contains(Busqueda.Trim(), StringComparison.OrdinalIgnoreCase)));
+        }
+
+        if (!string.IsNullOrWhiteSpace(CategoriaFiltro))
+        {
+            contactos = contactos.Where(c => c.Categoria == CategoriaFiltro);
+        }
+
+        ContactosFiltrados = contactos.Count();
+
+        contactos = Ordenar(contactos, Orden, Direccion);
+
+        var totalItems = contactos.Count();
+        TotalPages = (int)Math.Ceiling(totalItems / (double)PageSize);
+
+        CurrentPage = PageNumber < 1 ? 1 : (PageNumber > TotalPages ? TotalPages : PageNumber);
+
+        Contactos = contactos
+            .Skip((CurrentPage - 1) * PageSize)
+            .Take(PageSize)
+            .ToList();
+
+        return Partial("_TablaContactos", this);
     }
 
     private IEnumerable<Contacto> Ordenar(IEnumerable<Contacto> contactos, string orden, string direccion)
@@ -95,12 +151,9 @@ public class IndexModel : PageModel
             "apodo" => esDesc
                 ? contactos.OrderByDescending(c => c.Apodo)
                 : contactos.OrderBy(c => c.Apodo),
-            "telefono" => esDesc
-                ? contactos.OrderByDescending(c => c.Telefono)
-                : contactos.OrderBy(c => c.Telefono),
-            "email" => esDesc
-                ? contactos.OrderByDescending(c => c.Email)
-                : contactos.OrderBy(c => c.Email),
+            "categoria" => esDesc
+                ? contactos.OrderByDescending(c => c.Categoria)
+                : contactos.OrderBy(c => c.Categoria),
             _ => contactos.OrderBy(c => c.Nombre)
         };
     }
@@ -120,17 +173,14 @@ public class IndexModel : PageModel
 
     public IActionResult OnGetExportarCsv()
     {
-        // Obtener todos los contactos del usuario
         var usuarioId = User.FindFirstValue(ClaimTypes.NameIdentifier);
         var contactos = _contactoService.ObtenerTodos(usuarioId).ToList();
 
-        // Construir el CSV
         var csv = new System.Text.StringBuilder();
         csv.AppendLine("Nombre,Apellidos,Apodo,Telefono,Email,Notas,Favorito");
 
         foreach (var contacto in contactos)
         {
-            // Escapar comillas y comas para CSV
             var nombre = EscapeCsv(contacto.Nombre);
             var apellidos = EscapeCsv(contacto.Apellidos ?? "");
             var apodo = EscapeCsv(contacto.Apodo ?? "");
@@ -141,7 +191,6 @@ public class IndexModel : PageModel
             csv.AppendLine($"{nombre},{apellidos},{apodo},{telefono},{email},{favorito}");
         }
 
-        // Devolver el archivo CSV
         var bytes = System.Text.Encoding.UTF8.GetBytes(csv.ToString());
         var fileName = $"contactos_{DateTime.Now:yyyyMMdd_HHmmss}.csv";
 
@@ -153,7 +202,6 @@ public class IndexModel : PageModel
         if (string.IsNullOrEmpty(value))
             return "";
 
-        // Si contiene coma, comilla o salto de línea, escapar con comillas dobles
         if (value.Contains(",") || value.Contains("\"") || value.Contains("\n") || value.Contains("\r"))
         {
             return "\"" + value.Replace("\"", "\"\"") + "\"";
@@ -174,7 +222,6 @@ public class IndexModel : PageModel
             return RedirectToPage();
         }
 
-        // Validar extensión
         if (!CsvFile.FileName.EndsWith(".csv", StringComparison.OrdinalIgnoreCase))
         {
             TempData["Mensaje"] = "El archivo debe ser un CSV.";
@@ -189,10 +236,8 @@ public class IndexModel : PageModel
 
         using (var reader = new StreamReader(CsvFile.OpenReadStream()))
         {
-            // Leer la cabecera (primera línea)
             var cabecera = await reader.ReadLineAsync();
 
-            // Leer línea por línea
             string? linea;
             var numeroLinea = 1;
 
@@ -205,10 +250,8 @@ public class IndexModel : PageModel
 
                 try
                 {
-                    // Parsear la línea (maneja comillas y comas)
                     var campos = ParsearLineaCsv(linea);
 
-                    // Esperamos: Nombre, Apellidos, Apodo, Telefono, Email, Notas, Favorito
                     if (campos.Count < 5)
                     {
                         errores++;
@@ -253,7 +296,6 @@ public class IndexModel : PageModel
             }
         }
 
-        // Mensaje final
         if (importados > 0)
         {
             TempData["Mensaje"] = $"Se han importado {importados} contactos." + (errores > 0 ? $" {errores} errores." : "");
@@ -282,7 +324,6 @@ public class IndexModel : PageModel
             {
                 if (dentroDeComillas && i + 1 < linea.Length && linea[i + 1] == '"')
                 {
-                    // Comilla escapada ("")
                     campoActual.Append('"');
                     i++;
                 }

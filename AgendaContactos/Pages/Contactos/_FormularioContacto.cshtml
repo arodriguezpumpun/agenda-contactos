@@ -57,6 +57,21 @@
 </div>
 
 <div class="row">
+    <div class="col-md-6 mb-3">
+        <label asp-for="Categoria" class="form-label"></label>
+        <select asp-for="Categoria" class="form-select">
+            <option value="">-- Sin categoría --</option>
+            <option value="Familia">Familia</option>
+            <option value="Amigos">Amigos</option>
+            <option value="Trabajo">Trabajo</option>
+            <option value="Cliente">Cliente</option>
+            <option value="Otro">Otro</option>
+        </select>
+        <span asp-validation-for="Categoria" class="text-danger"></span>
+    </div>
+</div>
+
+<div class="row">
     <div class="col-md-12 mb-3">
         <label asp-for="Notas" class="form-label"></label>
         <textarea asp-for="Notas" class="form-control" rows="4" placeholder="Notas sobre el contacto (opcional)"></textarea>
