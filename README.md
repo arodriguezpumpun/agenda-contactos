@@ -21,4 +21,4 @@ se pierden al parar la aplicación.
 ## Estructura
 - `Models/Contacto.cs` - modelo con Data Annotations
 - `Services/ContactoService.cs` - lista en memoria
-- `Pages/Contactos/` - páginas de lista y alta
+- `Pages/Contactos/` - páginas de lista y alta.
