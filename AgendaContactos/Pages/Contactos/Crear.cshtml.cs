@@ -1,10 +1,13 @@
+using System.Security.Claims;
 using AgendaContactos.Models;
 using AgendaContactos.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace AgendaContactos.Pages.Contactos;
 
+[Authorize]
 public class CrearModel : PageModel
 {
     private readonly IContactoService _contactoService;
@@ -17,20 +20,36 @@ public class CrearModel : PageModel
     [BindProperty]
     public Contacto Contacto { get; set; } = new();
 
+    [BindProperty]
+    public IFormFile? FotoFile { get; set; }
+
     public void OnGet()
     {
-        // No hace nada especial al cargar la página
+
     }
 
-    public IActionResult OnPost()
+public async Task<IActionResult> OnPost()
+{
+    if (!ModelState.IsValid) return Page();
+
+    if (FotoFile != null && FotoFile.Length > 0)
     {
-        if (!ModelState.IsValid)
+        var fileName = Guid.NewGuid().ToString() + Path.GetExtension(FotoFile.FileName);
+        var filePath = Path.Combine("wwwroot/images/contactos", fileName);
+
+        Directory.CreateDirectory(Path.GetDirectoryName(filePath)!);
+
+        using (var stream = new FileStream(filePath, FileMode.Create))
         {
-            return Page(); // vuelve a mostrar el formulario con los errores
+            await FotoFile.CopyToAsync(stream);
         }
 
-        _contactoService.Anadir(Contacto);
-        TempData["Mensaje"] = $"Contacto {Contacto.Nombre} añadido.";
-        return RedirectToPage("Index");
+        Contacto.FotoUrl = "/images/contactos/" + fileName;
     }
+
+    Contacto.UsuarioId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+    _contactoService.Anadir(Contacto);
+    TempData["Mensaje"] = $"Contacto {Contacto.Nombre} añadido.";
+    return RedirectToPage("Index");
+}
 }

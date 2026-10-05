@@ -8,28 +8,14 @@ public class ContactoService : IContactoService
     private readonly object _lock = new();
     private int _siguienteId = 1;
 
-    public ContactoService()
-    {
-        // Datos de ejemplo para no empezar con la tabla vacía
-        Anadir(new Contacto
-        {
-            Nombre = "Ana García",
-            Telefono = "600111222",
-            Email = "ana@ejemplo.com"
-        });
-        Anadir(new Contacto
-        {
-            Nombre = "Luis Pérez",
-            Telefono = "600333444",
-            Email = "luis@ejemplo.com"
-        });
-    }
-
-    public IEnumerable<Contacto> ObtenerTodos()
+    public IEnumerable<Contacto> ObtenerTodos(string usuarioId)
     {
         lock (_lock)
         {
-            return _contactos.OrderBy(c => c.Nombre).ToList();
+            return _contactos
+                .Where(c => c.UsuarioId == usuarioId)
+                .OrderBy(c => c.Nombre)
+                .ToList();
         }
     }
 
@@ -57,9 +43,15 @@ public class ContactoService : IContactoService
             var existente = _contactos.FirstOrDefault(c => c.Id == contacto.Id);
             if (existente is null) return;
 
+            existente.FotoUrl = contacto.FotoUrl;
             existente.Nombre = contacto.Nombre;
+            existente.Apellidos = contacto.Apellidos;
+            existente.Apodo = contacto.Apodo;
             existente.Telefono = contacto.Telefono;
             existente.Email = contacto.Email;
+            existente.Categoria = contacto.Categoria;
+            existente.Notas = contacto.Notas;
+            existente.Favorito = contacto.Favorito;
         }
     }
 
@@ -68,6 +60,17 @@ public class ContactoService : IContactoService
         lock (_lock)
         {
             _contactos.RemoveAll(c => c.Id == id);
+        }
+    }
+
+    public void ToggleFavorito(int id)
+    {
+        lock (_lock)
+        {
+            var contacto = _contactos.FirstOrDefault(c => c.Id == id);
+            if (contacto is null) return;
+
+            contacto.Favorito = !contacto.Favorito;
         }
     }
 }

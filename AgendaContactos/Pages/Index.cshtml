@@ -1,10 +1,66 @@
 ﻿@page
-@model IndexModel
+@model AgendaContactos.Pages.IndexModel
 @{
-    ViewData["Title"] = "Home page";
+    ViewData["Title"] = "Inicio";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<div class="text-center mb-4">
+    <h1>¡Bienvenido a tu Agenda de Contactos!</h1>
+    <p class="text-muted">Gestiona tus contactos de forma fácil y rápida.</p>
 </div>
+
+<!-- Tarjetas de estadísticas -->
+<div class="row mb-4">
+    <div class="col-md-6">
+        <div class="card text-center">
+            <div class="card-body">
+                <i class="bi bi-people fs-1 text-primary"></i>
+                <h5 class="card-title mt-2">Contactos</h5>
+                <p class="display-4">@Model.TotalContactos</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card text-center">
+            <div class="card-body">
+                <i class="bi bi-star-fill fs-1 text-warning"></i>
+                <h5 class="card-title mt-2">Favoritos</h5>
+                <p class="display-4">@Model.TotalFavoritos</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Botones de acción -->
+<div class="text-center mb-4">
+    <a asp-page="/Contactos/Index" class="btn btn-secondary btn-lg">
+        <i class="bi bi-people"></i> Ver todos los contactos
+    </a>
+    <a asp-page="/Contactos/Crear" class="btn btn-primary btn-lg">
+        <i class="bi bi-plus-circle"></i> Nuevo contacto
+    </a>
+</div>
+
+<!-- Últimos contactos -->
+@if (Model.UltimosContactos.Any())
+{
+    <h3>Últimos contactos añadidos</h3>
+    <ul class="list-group">
+        @foreach (var contacto in Model.UltimosContactos)
+        {
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+                <div>
+                    @if (!string.IsNullOrEmpty(contacto.FotoUrl))
+                    {
+                        <img src="@contacto.FotoUrl" class="rounded-circle me-2" style="width: 30px; height: 30px; object-fit: cover;" />
+                    }
+                    <strong>@contacto.Nombre @contacto.Apellidos</strong>
+                    <span class="text-muted ms-2">@contacto.Email</span>
+                </div>
+                <a asp-page="/Contactos/Detalles" asp-route-id="@contacto.Id" class="btn btn-sm btn-outline-secondary">
+                    Ver
+                </a>
+            </li>
+        }
+    </ul>
+}
