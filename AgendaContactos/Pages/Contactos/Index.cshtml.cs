@@ -149,8 +149,10 @@ public class IndexModel : PageModel
                 ? contactos.OrderByDescending(c => c.Apellidos)
                 : contactos.OrderBy(c => c.Apellidos),
             "apodo" => esDesc
-                ? contactos.OrderByDescending(c => c.Apodo)
-                : contactos.OrderBy(c => c.Apodo),
+                ? contactos.OrderBy(c => c.Apodo == null || c.Apodo == "")
+                          .ThenByDescending(c => c.Apodo)
+                : contactos.OrderBy(c => c.Apodo == null || c.Apodo == "")
+                          .ThenBy(c => c.Apodo),
             "categoria" => esDesc
                 ? contactos.OrderByDescending(c => c.Categoria)
                 : contactos.OrderBy(c => c.Categoria),
