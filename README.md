@@ -10,7 +10,7 @@ cd nombre-repo/AgendaContactos
 dotnet run
 ```
 Abre en el navegador la URL que aparece en la terminal
-(por ejemplo http://localhost:5123) y entra en **Contactos**.
+(por ejemplo http://localhost:5123) y entra en **Contactos**
 ## Funcionalidades
 - Lista de contactos (nombre, teléfono, email)
 - Alta con validación ([Required] y [EmailAddress])
